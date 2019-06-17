@@ -3,12 +3,43 @@
 from __future__ import annotations
 
 import sys
+import unicodedata
 from typing import Any, Literal
 
 __all__ = ["table", "format_table"]
 
 Align = Literal["left", "right", "center"]
 Style = Literal["simple", "markdown", "none"]
+
+
+def _char_width(c: str) -> int:
+    """Return display width of a single character."""
+    if unicodedata.east_asian_width(c) in ("W", "F"):
+        return 2
+    return 1
+
+
+def _display_width(s: str) -> int:
+    """Return total display width of a string."""
+    return sum(_char_width(c) for c in s)
+
+
+def _pad_right(s: str, width: int) -> str:
+    """Left-align s in a field of given display width."""
+    return s + " " * (width - _display_width(s))
+
+
+def _pad_left(s: str, width: int) -> str:
+    """Right-align s in a field of given display width."""
+    return " " * (width - _display_width(s)) + s
+
+
+def _pad_center(s: str, width: int) -> str:
+    """Center s in a field of given display width."""
+    gap = width - _display_width(s)
+    left = gap // 2
+    right = gap - left
+    return " " * left + s + " " * right
 
 
 def format_table(
@@ -46,13 +77,13 @@ def format_table(
     align = align or {}
     str_rows = [[_truncate(str(v), max_width) for v in row] for row in rows]
 
-    col_widths = [len(h) for h in headers]
+    col_widths = [_display_width(h) for h in headers]
     for row in str_rows:
         for i, cell in enumerate(row):
             if i < len(col_widths):
-                col_widths[i] = max(col_widths[i], len(cell))
+                col_widths[i] = max(col_widths[i], _display_width(cell))
             else:
-                col_widths.append(len(cell))
+                col_widths.append(_display_width(cell))
 
     lines: list[str] = []
 
@@ -105,14 +136,20 @@ def table(
 
 
 def _truncate(value: str, max_width: int | None) -> str:
-    if max_width is not None and len(value) > max_width:
-        return value[: max_width - 1] + "\u2026"
+    if max_width is None:
+        return value
+    current = 0
+    for i, c in enumerate(value):
+        w = _char_width(c)
+        if current + w > max_width - 1:
+            return value[:i] + "\u2026"
+        current += w
     return value
 
 
 def _align_cell(value: str, width: int, alignment: Align) -> str:
     if alignment == "right":
-        return value.rjust(width)
+        return _pad_left(value, width)
     if alignment == "center":
-        return value.center(width)
-    return value.ljust(width)
+        return _pad_center(value, width)
+    return _pad_right(value, width)

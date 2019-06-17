@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from philiprehberger_cli_table import format_table, table
+from philiprehberger_cli_table import _display_width
 
 
 class TestDictListMode:
@@ -146,6 +147,33 @@ class TestFormatTableReturnsString:
     def test_format_table_returns_string(self) -> None:
         result = format_table(data=[{"a": "1"}])
         assert isinstance(result, str)
+
+
+class TestWideCharacters:
+    def test_cjk_columns_align_correctly(self) -> None:
+        result = format_table(
+            headers=["Name"],
+            rows=[["名前"], ["ab"]],
+        )
+        lines = result.split("\n")
+        # "名前" has display width 4, "ab" has display width 2
+        # Both rows should be padded to the same display width (4)
+        header_line = lines[0]
+        data_line_cjk = lines[2]
+        data_line_ascii = lines[3]
+        assert _display_width(header_line) == _display_width(data_line_cjk)
+        assert _display_width(data_line_cjk) == _display_width(data_line_ascii)
+
+    def test_truncation_of_wide_chars(self) -> None:
+        result = format_table(
+            headers=["Text"],
+            rows=[["漢字漢字漢字"]],
+            max_width=5,
+        )
+        lines = result.split("\n")
+        cell_text = lines[2].strip()
+        assert "\u2026" in cell_text
+        assert _display_width(cell_text) <= 5
 
 
 class TestTablePrintsToStdout:

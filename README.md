@@ -103,6 +103,10 @@ table(
 )
 ```
 
+## Wide character support
+
+Supports CJK and other wide Unicode characters with correct column alignment.
+
 ## API
 
 | Function | Description |

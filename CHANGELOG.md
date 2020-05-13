@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Add Development section to README
+
 ## 0.1.1 (2026-03-15)
 
 - Fix column alignment for CJK and wide Unicode characters

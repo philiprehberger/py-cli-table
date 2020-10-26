@@ -2,7 +2,7 @@
 
 Format Python data as aligned terminal tables with no dependencies.
 
-## Install
+## Installation
 
 ```bash
 pip install philiprehberger-cli-table

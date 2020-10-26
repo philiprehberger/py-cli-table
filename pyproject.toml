@@ -24,9 +24,10 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/philiprehberger/py-cli-table"
+Homepage = "https://github.com/philiprehberger/py-cli-table#readme"
 Repository = "https://github.com/philiprehberger/py-cli-table"
 Issues = "https://github.com/philiprehberger/py-cli-table/issues"
+Changelog = "https://github.com/philiprehberger/py-cli-table/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/philiprehberger_cli_table"]

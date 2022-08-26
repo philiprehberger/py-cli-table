@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9 (2026-03-22)
+
+- Add badges to README
+
 ## 0.1.8
 
 - Add pytest and mypy tool configuration to pyproject.toml

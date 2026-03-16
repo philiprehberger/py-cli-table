@@ -125,6 +125,14 @@ Supports CJK and other wide Unicode characters with correct column alignment.
 | `max_width` | `int \| None` | `None` | Truncate cell values to this width |
 | `style` | `Style` | `"simple"` | Border style: `"simple"`, `"markdown"`, `"none"` |
 
+
+## Development
+
+```bash
+pip install -e .
+python -m pytest tests/ -v
+```
+
 ## License
 
 MIT

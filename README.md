@@ -1,5 +1,9 @@
 # philiprehberger-cli-table
 
+[![Tests](https://github.com/philiprehberger/py-cli-table/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-cli-table/actions/workflows/publish.yml)
+[![PyPI version](https://img.shields.io/pypi/v/philiprehberger-cli-table.svg)](https://pypi.org/project/philiprehberger-cli-table/)
+[![License](https://img.shields.io/github/license/philiprehberger/py-cli-table)](LICENSE)
+
 Format Python data as aligned terminal tables with no dependencies.
 
 ## Installation
@@ -103,28 +107,25 @@ table(
 )
 ```
 
-## Wide character support
+### Wide character support
 
 Supports CJK and other wide Unicode characters with correct column alignment.
 
 ## API
 
-| Function | Description |
-| --- | --- |
+| Function / Class | Description |
+|------------------|-------------|
 | `format_table(headers, rows, *, data, align, max_width, style)` | Returns a formatted table as a string |
 | `table(data, headers, rows, **kwargs)` | Prints a formatted table to stdout |
 
-### Parameters
-
 | Parameter | Type | Default | Description |
-| --- | --- | --- | --- |
+|-----------|------|---------|-------------|
 | `headers` | `list[str] \| None` | `None` | Column header names |
 | `rows` | `list[list[Any]] \| None` | `None` | List of row value lists |
 | `data` | `list[dict[str, Any]] \| None` | `None` | List of dicts (keys become headers) |
 | `align` | `dict[str, Align] \| None` | `None` | Per-column alignment: `"left"`, `"right"`, `"center"` |
 | `max_width` | `int \| None` | `None` | Truncate cell values to this width |
 | `style` | `Style` | `"simple"` | Border style: `"simple"`, `"markdown"`, `"none"` |
-
 
 ## Development
 

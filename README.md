@@ -3,6 +3,7 @@
 [![Tests](https://github.com/philiprehberger/py-cli-table/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-cli-table/actions/workflows/publish.yml)
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-cli-table.svg)](https://pypi.org/project/philiprehberger-cli-table/)
 [![License](https://img.shields.io/github/license/philiprehberger/py-cli-table)](LICENSE)
+[![Sponsor](https://img.shields.io/badge/sponsor-GitHub%20Sponsors-ec6cb9)](https://github.com/sponsors/philiprehberger)
 
 Format Python data as aligned terminal tables with no dependencies.
 

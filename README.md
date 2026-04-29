@@ -111,11 +111,41 @@ table(
 
 Supports CJK and other wide Unicode characters with correct column alignment.
 
+### Footer / totals row
+
+```python
+from philiprehberger_cli_table import table
+
+table(
+    headers=["Item", "Qty", "Total"],
+    rows=[
+        ["Coffee", "3", "12.00"],
+        ["Tea", "2", "4.00"],
+    ],
+    footer=["Total", "5", "16.00"],
+)
+# Item    Qty  Total
+# ------  ---  -----
+# Coffee  3    12.00
+# Tea     2     4.00
+# ------  ---  -----
+# Total   5    16.00
+```
+
+A footer can also be passed as a dict keyed by header name:
+
+```python
+table(
+    data=[{"item": "Coffee", "n": 3}, {"item": "Tea", "n": 2}],
+    footer={"item": "Total", "n": 5},
+)
+```
+
 ## API
 
 | Function | Description |
 | --- | --- |
-| `format_table(headers, rows, *, data, align, max_width, style)` | Returns a formatted table as a string |
+| `format_table(headers, rows, *, data, align, max_width, style, footer)` | Returns a formatted table as a string |
 | `table(data, headers, rows, **kwargs)` | Prints a formatted table to stdout |
 
 ### Parameters
@@ -128,6 +158,7 @@ Supports CJK and other wide Unicode characters with correct column alignment.
 | `align` | `dict[str, Align] \| None` | `None` | Per-column alignment: `"left"`, `"right"`, `"center"` |
 | `max_width` | `int \| None` | `None` | Truncate cell values to this width |
 | `style` | `Style` | `"simple"` | Border style: `"simple"`, `"markdown"`, `"none"` |
+| `footer` | `list \| dict \| None` | `None` | Footer row rendered below a divider (totals/summary) |
 
 ## Development
 

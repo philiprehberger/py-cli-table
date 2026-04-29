@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.0 (2026-04-29)
+
+- Add `footer` parameter to `format_table()` and `table()` for totals/summary rows; accepts either a list of cell values or a dict keyed by header
+- Footer columns auto-widen to fit and are rendered below a divider for `simple` and `markdown` styles
+
 ## 0.1.10 (2026-03-31)
 
 - Standardize README to 3-badge format with emoji Support section

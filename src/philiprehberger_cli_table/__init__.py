@@ -50,6 +50,7 @@ def format_table(
     align: dict[str, Align] | None = None,
     max_width: int | None = None,
     style: Style = "simple",
+    footer: list[Any] | dict[str, Any] | None = None,
 ) -> str:
     """Format data as an aligned table string.
 
@@ -62,6 +63,9 @@ def format_table(
         align: Per-column alignment overrides.
         max_width: Truncate cell values to this width.
         style: Border style — "simple", "markdown", or "none".
+        footer: Optional footer row rendered below a divider — pass a list of
+            cell values (one per column) or a dict keyed by header name.
+            Useful for totals/summary rows.
     """
     if data is not None:
         if not data:
@@ -77,6 +81,14 @@ def format_table(
     align = align or {}
     str_rows = [[_truncate(str(v), max_width) for v in row] for row in rows]
 
+    footer_row: list[str] | None = None
+    if footer is not None:
+        if isinstance(footer, dict):
+            footer_values = [footer.get(h, "") for h in headers]
+        else:
+            footer_values = list(footer)
+        footer_row = [_truncate(str(v), max_width) for v in footer_values]
+
     col_widths = [_display_width(h) for h in headers]
     for row in str_rows:
         for i, cell in enumerate(row):
@@ -84,6 +96,10 @@ def format_table(
                 col_widths[i] = max(col_widths[i], _display_width(cell))
             else:
                 col_widths.append(_display_width(cell))
+    if footer_row is not None:
+        for i, cell in enumerate(footer_row):
+            if i < len(col_widths):
+                col_widths[i] = max(col_widths[i], _display_width(cell))
 
     lines: list[str] = []
 
@@ -117,6 +133,19 @@ def format_table(
             cells.append(_align_cell(value, col_widths[i], align.get(h, "left")))
         if style == "markdown":
             lines.append("| " + " | ".join(cells) + " |")
+        else:
+            lines.append("  ".join(cells))
+
+    if footer_row is not None:
+        cells = []
+        for i, h in enumerate(headers):
+            value = footer_row[i] if i < len(footer_row) else ""
+            cells.append(_align_cell(value, col_widths[i], align.get(h, "left")))
+        if style == "markdown":
+            lines.append("| " + " | ".join(cells) + " |")
+        elif style == "simple":
+            lines.append("  ".join("-" * w for w in col_widths))
+            lines.append("  ".join(cells))
         else:
             lines.append("  ".join(cells))
 

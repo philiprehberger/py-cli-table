@@ -176,6 +176,48 @@ class TestWideCharacters:
         assert _display_width(cell_text) <= 5
 
 
+class TestFooter:
+    def test_footer_list_renders_below_divider(self) -> None:
+        result = format_table(
+            headers=["Item", "Qty", "Total"],
+            rows=[
+                ["Coffee", "3", "12.00"],
+                ["Tea", "2", "4.00"],
+            ],
+            footer=["Total", "5", "16.00"],
+        )
+        lines = result.split("\n")
+        assert lines[-1].lstrip().startswith("Total")
+        assert "16.00" in lines[-1]
+        assert set(lines[-2].strip()) <= {"-", " "}
+
+    def test_footer_dict_renders(self) -> None:
+        result = format_table(
+            data=[{"item": "x", "n": "1"}, {"item": "y", "n": "2"}],
+            footer={"item": "Total", "n": "3"},
+        )
+        lines = result.split("\n")
+        assert "Total" in lines[-1]
+        assert "3" in lines[-1]
+
+    def test_footer_with_markdown_style(self) -> None:
+        result = format_table(
+            headers=["a", "b"],
+            rows=[["1", "2"]],
+            footer=["sum", "3"],
+            style="markdown",
+        )
+        assert result.split("\n")[-1] == "| sum | 3 |"
+
+    def test_footer_widens_column_to_fit(self) -> None:
+        result = format_table(
+            headers=["a"],
+            rows=[["x"]],
+            footer=["very-wide-footer"],
+        )
+        assert "very-wide-footer" in result.split("\n")[-1]
+
+
 class TestTablePrintsToStdout:
     def test_table_prints_to_stdout(self, capsys: pytest.CaptureFixture[str]) -> None:
         table(data=[{"x": "1", "y": "2"}])

@@ -108,7 +108,7 @@ class TestStyles:
     def test_markdown_style(self) -> None:
         result = format_table(
             headers=["A", "B"],
-            rows=[["1", "2"]],
+            rows=[["x", "y"]],
             style="markdown",
         )
         lines = result.split("\n")
@@ -226,3 +226,81 @@ class TestTablePrintsToStdout:
         assert "y" in captured.out
         assert "1" in captured.out
         assert "2" in captured.out
+
+
+class TestAutoAlignment:
+    def test_numeric_int_column_auto_right_aligns(self) -> None:
+        out = format_table(
+            headers=["item", "qty"],
+            rows=[["Coffee", 3], ["Tea", 12]],
+        )
+        lines = out.splitlines()
+        # right-aligned: pad before value
+        assert lines[2].endswith(" 3")
+        assert lines[3].endswith("12")
+
+    def test_numeric_float_column_auto_right_aligns(self) -> None:
+        out = format_table(
+            headers=["item", "price"],
+            rows=[["Coffee", 4.50], ["Tea", 2.00]],
+        )
+        lines = out.splitlines()
+        assert lines[2].rstrip().endswith("4.5")
+
+    def test_numeric_string_column_auto_right_aligns(self) -> None:
+        out = format_table(
+            headers=["item", "qty"],
+            rows=[["Coffee", "3"], ["Tea", "12"]],
+        )
+        lines = out.splitlines()
+        assert lines[2].endswith(" 3")
+        assert lines[3].endswith("12")
+
+    def test_non_numeric_column_stays_left_aligned(self) -> None:
+        out = format_table(
+            headers=["item"],
+            rows=[["Coffee"], ["Tea"]],
+        )
+        lines = out.splitlines()
+        assert lines[2].startswith("Coffee")
+        assert lines[3].startswith("Tea")
+
+    def test_explicit_align_overrides_inferred(self) -> None:
+        out = format_table(
+            headers=["qty"],
+            rows=[[3], [12]],
+            align={"qty": "left"},
+        )
+        lines = out.splitlines()
+        # Left-aligned: value at the start
+        assert lines[2].startswith("3 ")
+        assert lines[3].startswith("12")
+
+    def test_mixed_numeric_and_non_numeric_disables_inference(self) -> None:
+        out = format_table(
+            headers=["v"],
+            rows=[[1], ["abc"]],
+        )
+        lines = out.splitlines()
+        assert lines[2].startswith("1  ")  # left-aligned
+        assert lines[3].startswith("abc")
+
+    def test_bool_column_not_inferred_as_numeric(self) -> None:
+        out = format_table(
+            headers=["flag"],
+            rows=[[True], [False]],
+        )
+        lines = out.splitlines()
+        # Should be left-aligned (booleans excluded)
+        assert lines[2].startswith("True")
+        assert lines[3].startswith("False")
+
+    def test_empty_and_none_ignored_when_inferring(self) -> None:
+        out = format_table(
+            headers=["n"],
+            rows=[[1], [None], [3]],
+        )
+        lines = out.splitlines()
+        # right-aligned since None/empty are ignored
+        assert lines[2].endswith("1")
+        assert lines[4].endswith("3")

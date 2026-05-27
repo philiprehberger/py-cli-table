@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0 (2026-05-26)
+
+- Numeric columns now auto-right-align when no explicit `align` is provided — detected from int/float values and numeric strings. Pass `align={"col": "left"}` to override.
+- Add package-card image to README
+
 ## 0.2.0 (2026-04-29)
 
 - Add `footer` parameter to `format_table()` and `table()` for totals/summary rows; accepts either a list of cell values or a dict keyed by header
@@ -15,15 +20,15 @@
 
 - Add badges to README
 
-## 0.1.8
+## 0.1.8 (2026-03-21)
 
 - Add pytest and mypy tool configuration to pyproject.toml
 
-## 0.1.7
+## 0.1.7 (2026-03-19)
 
 - Trim keywords to match pyproject template guide
 
-## 0.1.3
+## 0.1.3 (2026-03-16)
 
 - Add Development section to README
 

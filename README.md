@@ -4,6 +4,8 @@
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-cli-table.svg)](https://pypi.org/project/philiprehberger-cli-table/)
 [![Last updated](https://img.shields.io/github/last-commit/philiprehberger/py-cli-table)](https://github.com/philiprehberger/py-cli-table/commits/main)
 
+![philiprehberger-cli-table](https://raw.githubusercontent.com/philiprehberger/py-cli-table/main/package-card.webp)
+
 Format Python data as aligned terminal tables with no dependencies.
 
 ## Installation
@@ -53,6 +55,8 @@ table(
 
 ### Column alignment
 
+Numeric columns auto-right-align — no `align` config needed. Pass `align` only when you want to override the inferred alignment.
+
 ```python
 from philiprehberger_cli_table import table
 
@@ -61,12 +65,17 @@ table(
         {"item": "Coffee", "qty": 3, "price": "4.50"},
         {"item": "Tea", "qty": 12, "price": "2.00"},
     ],
-    align={"qty": "right", "price": "right"},
 )
 # item    qty  price
 # ------  ---  -----
 # Coffee    3   4.50
 # Tea      12   2.00
+
+# Override inferred alignment when needed
+table(
+    data=[{"item": "Coffee", "qty": 3}],
+    align={"qty": "center"},
+)
 ```
 
 ### Styles

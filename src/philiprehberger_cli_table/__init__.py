@@ -78,8 +78,17 @@ def format_table(
     if not headers:
         return ""
 
-    align = align or {}
+    align = dict(align or {})
+
+    raw_rows = rows
     str_rows = [[_truncate(str(v), max_width) for v in row] for row in rows]
+
+    for i, header in enumerate(headers):
+        if header in align:
+            continue
+        column = [row[i] for row in raw_rows if i < len(row)]
+        if _is_numeric_column(column):
+            align[header] = "right"
 
     footer_row: list[str] | None = None
     if footer is not None:
@@ -117,11 +126,11 @@ def format_table(
             a = align.get(h, "left")
             w = col_widths[i]
             if a == "right":
-                sep_parts.append("-" * (w - 1) + ":")
+                sep_parts.append("-" * max(w - 1, 2) + ":")
             elif a == "center":
-                sep_parts.append(":" + "-" * (w - 2) + ":")
+                sep_parts.append(":" + "-" * max(w - 2, 1) + ":")
             else:
-                sep_parts.append("-" * w)
+                sep_parts.append("-" * max(w, 3))
         lines.append("| " + " | ".join(sep_parts) + " |")
     elif style == "none":
         lines.append("  ".join(header_cells))
@@ -174,6 +183,33 @@ def _truncate(value: str, max_width: int | None) -> str:
             return value[:i] + "\u2026"
         current += w
     return value
+
+
+def _is_numeric_column(values: list[Any]) -> bool:
+    """Return True when every non-empty value in a column is numeric.
+
+    A column counts as numeric if it has at least one value and every present
+    value is an ``int``, ``float``, ``bool``, or a string that parses as a
+    number. ``None`` and empty strings are treated as missing and ignored.
+    Booleans, while numeric in Python, are excluded so a True/False column
+    stays left-aligned.
+    """
+    present = [v for v in values if v is not None and v != ""]
+    if not present:
+        return False
+    for v in present:
+        if isinstance(v, bool):
+            return False
+        if isinstance(v, (int, float)):
+            continue
+        if isinstance(v, str):
+            try:
+                float(v.replace(",", ""))
+            except ValueError:
+                return False
+            continue
+        return False
+    return True
 
 
 def _align_cell(value: str, width: int, alignment: Align) -> str:

@@ -103,6 +103,19 @@ print(format_table(
 # Name   Score
 # Alice  95
 # Bob    87
+
+# Grid style with Unicode box-drawing borders
+print(format_table(
+    headers=["Name", "Score"],
+    rows=[["Alice", "95"], ["Bob", "87"]],
+    style="grid",
+))
+# ┌───────┬───────┐
+# │ Name  │ Score │
+# ├───────┼───────┤
+# │ Alice │ 95    │
+# │ Bob   │ 87    │
+# └───────┴───────┘
 ```
 
 ### Cell truncation
@@ -166,7 +179,7 @@ table(
 | `data` | `list[dict[str, Any]] \| None` | `None` | List of dicts (keys become headers) |
 | `align` | `dict[str, Align] \| None` | `None` | Per-column alignment: `"left"`, `"right"`, `"center"` |
 | `max_width` | `int \| None` | `None` | Truncate cell values to this width |
-| `style` | `Style` | `"simple"` | Border style: `"simple"`, `"markdown"`, `"none"` |
+| `style` | `Style` | `"simple"` | Border style: `"simple"`, `"markdown"`, `"none"`, `"grid"` |
 | `footer` | `list \| dict \| None` | `None` | Footer row rendered below a divider (totals/summary) |
 
 ## Development

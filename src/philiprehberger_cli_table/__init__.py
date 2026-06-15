@@ -9,7 +9,21 @@ from typing import Any, Literal
 __all__ = ["table", "format_table"]
 
 Align = Literal["left", "right", "center"]
-Style = Literal["simple", "markdown", "none"]
+Style = Literal["simple", "markdown", "none", "grid"]
+
+_GRID_CHARS = {
+    "tl": "┌",  # ┌
+    "tr": "┐",  # ┐
+    "bl": "└",  # └
+    "br": "┘",  # ┘
+    "ml": "├",  # ├
+    "mr": "┤",  # ┤
+    "tm": "┬",  # ┬
+    "bm": "┴",  # ┴
+    "mm": "┼",  # ┼
+    "h": "─",   # ─
+    "v": "│",   # │
+}
 
 
 def _char_width(c: str) -> int:
@@ -116,7 +130,15 @@ def format_table(
         _align_cell(h, col_widths[i], align.get(h, "left")) for i, h in enumerate(headers)
     ]
 
-    if style == "simple":
+    if style == "grid":
+        ch = _GRID_CHARS
+        top = ch["tl"] + ch["tm"].join(ch["h"] * (w + 2) for w in col_widths) + ch["tr"]
+        sep = ch["ml"] + ch["mm"].join(ch["h"] * (w + 2) for w in col_widths) + ch["mr"]
+        bottom = ch["bl"] + ch["bm"].join(ch["h"] * (w + 2) for w in col_widths) + ch["br"]
+        lines.append(top)
+        lines.append(ch["v"] + ch["v"].join(f" {c} " for c in header_cells) + ch["v"])
+        lines.append(sep)
+    elif style == "simple":
         lines.append("  ".join(header_cells))
         lines.append("  ".join("-" * w for w in col_widths))
     elif style == "markdown":
@@ -142,6 +164,9 @@ def format_table(
             cells.append(_align_cell(value, col_widths[i], align.get(h, "left")))
         if style == "markdown":
             lines.append("| " + " | ".join(cells) + " |")
+        elif style == "grid":
+            ch = _GRID_CHARS
+            lines.append(ch["v"] + ch["v"].join(f" {c} " for c in cells) + ch["v"])
         else:
             lines.append("  ".join(cells))
 
@@ -155,8 +180,18 @@ def format_table(
         elif style == "simple":
             lines.append("  ".join("-" * w for w in col_widths))
             lines.append("  ".join(cells))
+        elif style == "grid":
+            ch = _GRID_CHARS
+            sep = ch["ml"] + ch["mm"].join(ch["h"] * (w + 2) for w in col_widths) + ch["mr"]
+            lines.append(sep)
+            lines.append(ch["v"] + ch["v"].join(f" {c} " for c in cells) + ch["v"])
         else:
             lines.append("  ".join(cells))
+
+    if style == "grid":
+        ch = _GRID_CHARS
+        bottom = ch["bl"] + ch["bm"].join(ch["h"] * (w + 2) for w in col_widths) + ch["br"]
+        lines.append(bottom)
 
     return "\n".join(lines)
 

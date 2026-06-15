@@ -304,3 +304,44 @@ class TestAutoAlignment:
         # right-aligned since None/empty are ignored
         assert lines[2].endswith("1")
         assert lines[4].endswith("3")
+
+
+class TestGridStyle:
+    def test_grid_has_top_separator_and_bottom_borders(self) -> None:
+        result = format_table(
+            headers=["a", "b"],
+            rows=[["1", "2"], ["3", "4"]],
+            style="grid",
+        )
+        lines = result.splitlines()
+        assert lines[0].startswith("┌") and lines[0].endswith("┐")
+        # header row
+        assert lines[1].startswith("│") and lines[1].endswith("│")
+        # divider between header and body
+        assert lines[2].startswith("├") and lines[2].endswith("┤")
+        # body rows
+        assert lines[3].startswith("│") and lines[3].endswith("│")
+        # bottom border
+        assert lines[-1].startswith("└") and lines[-1].endswith("┘")
+
+    def test_grid_with_footer_inserts_inner_divider(self) -> None:
+        result = format_table(
+            headers=["item", "n"],
+            rows=[["a", "1"], ["b", "2"]],
+            footer=["total", "3"],
+            style="grid",
+        )
+        lines = result.splitlines()
+        # last 3 lines: divider, footer row, bottom
+        assert lines[-3].startswith("├")
+        assert lines[-2].startswith("│")
+        assert "total" in lines[-2]
+        assert lines[-1].startswith("└")
+
+    def test_grid_renders_data_cells(self) -> None:
+        result = format_table(
+            headers=["x"],
+            rows=[["hello"]],
+            style="grid",
+        )
+        assert "hello" in result

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2026-06-15)
+
+- Add `style="grid"` rendering with Unicode box-drawing borders for framed tables; footer renders below an inner divider
+- Sync `pyproject.toml` description to end with a period (matches README one-liner)
+
 ## 0.3.0 (2026-05-26)
 
 - Numeric columns now auto-right-align when no explicit `align` is provided — detected from int/float values and numeric strings. Pass `align={"col": "left"}` to override.
